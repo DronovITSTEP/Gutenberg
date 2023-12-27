@@ -1,0 +1,50 @@
+﻿<Window x:Class="Gutenberg.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gutenberg"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Button Grid.Column="0" Grid.Row="0" 
+                Margin="10"
+                Content="Показать книги"
+                x:Name="LoadText"
+                Click="LoadText_Click"/>
+        <Image Grid.Column="1" Grid.Row="0" Width="129" Height="80"
+               HorizontalAlignment="Right"
+    Source="https://www.gutenberg.org/gutenberg/pg-logo-129x80.png"/>
+        <ScrollViewer Grid.Column="1" Grid.Row="1"
+                      Margin="10">
+            <Border BorderBrush="Gray" BorderThickness="2">
+                <TextBlock x:Name="TextBook" Padding="5"/>
+            </Border>
+        </ScrollViewer>
+        <DataGrid Grid.Column="0" Grid.Row="1"
+                  Margin="10"
+            x:Name="PopularBook"                 
+                  ItemsSource="{Binding Books}" AutoGenerateColumns="False" 
+                  SelectionChanged="PopularBook_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Image">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ImageSource}" Width="50" Height="75"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="Auto"/>
+                <DataGridTextColumn Header="Link" Binding="{Binding Link}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

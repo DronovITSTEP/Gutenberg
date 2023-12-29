@@ -5,9 +5,15 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Gutenberg
 {
@@ -20,26 +26,26 @@ namespace Gutenberg
         const string Top100Book = "https://www.gutenberg.org/browse/scores/top";
         const string MainLogo = "https://www.gutenberg.org/gutenberg/pg-logo-129x80.png";
 
-        public ObservableCollection<Book> Books { get; set; } = new ObservableCollection<Book>();
+        public ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
 
         // загрузка текста книги
-        public string LoadTextBook(string idBook)
+        public async Task<string> LoadTextBookAsync(string idBook)
         {
-            string url = String.Format("{0}{1}/pg{1}", TextBookUrl, idBook);
+            string url = string.Format("{0}{1}/pg{1}", TextBookUrl, idBook);
             WebRequest req = WebRequest.Create(url);
             req.Method = "GET";
-            WebResponse rez = req.GetResponse();
+            WebResponse rez = await req.GetResponseAsync();
             using (StreamReader sr = new StreamReader(rez.GetResponseStream(), Encoding.Default))
             {
-                string textBook = sr.ReadToEnd();
+                string textBook = await sr.ReadToEndAsync();
                 return textBook;
             }
         }
         // загрузка топ-100 книг
-        public void LoadPopularBook()
+        public async Task LoadPopularBookAsync()
         {
             var htmlWeb = new HtmlWeb();
-            var htmlDocument = htmlWeb.Load(Top100Book);
+            var htmlDocument = await htmlWeb.LoadFromWebAsync(Top100Book);
             var bookNodes = htmlDocument.DocumentNode.SelectSingleNode("//ol");
             foreach (var book in bookNodes.Descendants())
             {
@@ -47,20 +53,19 @@ namespace Gutenberg
                 var id = book.GetAttributeValue("href", "").Split('/').LastOrDefault();
                 if (id != "")
                 {
-                    BitmapImage bitmap = LoadImageBook(id);
-                    Books.Add(new Book { Title = title, Link = id, ImageSource = bitmap });
+                    Books.Add(new Book { Title = title, Link = id, ImageSource = LoadImage(id) });
                 }
             }
         }
-        // загрузка обложки книги
-        private BitmapImage LoadImageBook(string idBook)
+        private BitmapImage LoadImage(string id)
         {
-            string uri = String.Format("{0}{1}/pg{1}.cover.medium.jpg", TextBookUrl, idBook);
-            BitmapImage bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(uri);
-            bitmap.EndInit();
-            return bitmap;
+            string uri = string.Format("{0}{1}/pg{1}.cover.medium.jpg", TextBookUrl, id);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = new Uri(uri);
+            image.EndInit();
+            return image;
         }
+
     }
 }

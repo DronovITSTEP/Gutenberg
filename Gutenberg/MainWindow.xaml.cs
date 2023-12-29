@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -22,18 +23,26 @@ namespace Gutenberg
             InitializeComponent();
             GutenbergWebSite = new GutenbergWebSite();
             PopularBook.ItemsSource = GutenbergWebSite.Books;
+            
         }
 
-        private void LoadText_Click(object sender, RoutedEventArgs e)
+        private async void LoadText_Click(object sender, RoutedEventArgs e)
         {
-            GutenbergWebSite.LoadPopularBook();
-        }       
-        
-
-        private void PopularBook_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            GutenbergWebSite.Books.Clear();
+            await GutenbergWebSite.LoadPopularBookAsync();
+        }               
+        private async void PopularBook_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GutenbergWebSite.LoadTextBook((PopularBook.SelectedValue as Book).Link);
+            TextBook.Text = await GutenbergWebSite.LoadTextBookAsync((PopularBook.SelectedValue as Book).Link);
         }
-        
+
+        private void SaveBookButton_Click(object sender, RoutedEventArgs e)
+        {
+            Book book = PopularBook.SelectedValue as Book;
+            using (StreamWriter writer = new StreamWriter(book.Title + ".txt"))
+            {
+                writer.Write(TextBook.Text);
+            }
+        }
     }
 }

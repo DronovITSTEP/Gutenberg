@@ -9,28 +9,35 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        
         <Button Grid.Column="0" Grid.Row="0" 
                 Margin="10"
                 Content="Показать книги"
                 x:Name="LoadText"
                 Click="LoadText_Click"/>
-        <Image Grid.Column="1" Grid.Row="0" Width="129" Height="80"
+        <Button Grid.Column="1" Grid.Row="0"
+                Margin="10"
+            x:Name="SaveBookButton"
+                Content="Сохранить" Click="SaveBookButton_Click"/>
+
+        <Image Grid.Column="2" Grid.Row="0" Width="129" Height="80"
                HorizontalAlignment="Right"
     Source="https://www.gutenberg.org/gutenberg/pg-logo-129x80.png"/>
-        <ScrollViewer Grid.Column="1" Grid.Row="1"
+        <ScrollViewer Grid.Column="2" Grid.Row="1"
                       Margin="10">
             <Border BorderBrush="Gray" BorderThickness="2">
                 <TextBlock x:Name="TextBook" Padding="5"/>
             </Border>
         </ScrollViewer>
-        <DataGrid Grid.Column="0" Grid.Row="1"
-                  Margin="10"
+        <DataGrid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                  Margin="10" 
             x:Name="PopularBook"                 
                   ItemsSource="{Binding Books}" AutoGenerateColumns="False" 
                   SelectionChanged="PopularBook_SelectionChanged">
